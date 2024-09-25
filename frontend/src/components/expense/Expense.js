@@ -1,7 +1,7 @@
 import ExpenseForm from "./ExpenseForm";
 import ExpenseList from "./ExpenseList";
 
-export default function () {
+export default function Expense() {
   return (
     <main className="w-full min-h-dvh flex flex-col items-center justify-center bg-gray-50 sm:px-4">
       <div className="w-full space-y-6 text-gray-600 sm:max-w-md">

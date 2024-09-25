@@ -5,11 +5,13 @@ import AlertLogo from "../../assets/AlertLogo";
 import CloseIcon from "../../assets/CloseIcon";
 
 export default function Alert(props) {
-  useEffect(() => {
-    const timeId = setTimeout(props.closeError, 3000);
+  const { message, closeError } = props;
 
-    () => clearTimeout(timeId);
-  }, []);
+  useEffect(() => {
+    const timeId = setTimeout(closeError, 3000);
+
+    return () => clearTimeout(timeId);
+  }, [closeError]);
 
   return createPortal(
     <div className="px-4 rounded-md border-l-4 border-red-500 bg-red-50 w-full sm:w-96 sm:px-8 fixed top-4 right-0 sm:right-4">
@@ -20,10 +22,10 @@ export default function Alert(props) {
           </div>
           <div className="self-center ml-3">
             <span className="text-red-600 font-semibold">Error</span>
-            <p className="text-red-600 mt-1">{props.message}</p>
+            <p className="text-red-600 mt-1">{message}</p>
           </div>
         </div>
-        <button className="self-start text-red-500" onClick={props.closeError}>
+        <button className="self-start text-red-500" onClick={closeError}>
           <CloseIcon />
         </button>
       </div>

@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 
@@ -13,35 +13,39 @@ export default function ExpenseList() {
   const dispatch = useDispatch();
 
   const authCtx = useContext(authContext);
+  const userId = authCtx.loggedUser.id;
 
   const [error, setError] = useState();
 
-  async function fetchExpenses() {
-    try {
-      const response = await axios.get(
-        `http://localhost:4000/user/${authCtx.loggedUser.id}/expense`
-      );
+  const fetchExpenses = useCallback(
+    async function () {
+      try {
+        const response = await axios.get(
+          `http://localhost:4000/user/${userId}/expense`
+        );
 
-      dispatch(getExpense(response.data));
-    } catch (error) {
-      console.error(error);
-      if (error.response) {
-        setError({ message: error.response.data });
-      } else {
-        setError({
-          message: "Someting went wrong, try again after some time.",
-        });
+        dispatch(getExpense(response.data));
+      } catch (error) {
+        console.error(error);
+        if (error.response) {
+          setError({ message: error.response.data });
+        } else {
+          setError({
+            message: "Someting went wrong, try again after some time.",
+          });
+        }
       }
-    }
-  }
+    },
+    [dispatch, userId]
+  );
 
   useEffect(() => {
     fetchExpenses();
-  }, []);
+  }, [fetchExpenses]);
 
   return (
     <>
-      <ul role="list" className="divide-y divide-gray-100">
+      <ul className="divide-y divide-gray-100">
         {expenseItems.map((e) => {
           return (
             <ExpenseItem

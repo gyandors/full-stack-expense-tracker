@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import axios from "axios";
 
 import Spinner from "../../assets/Spinner";
@@ -6,7 +6,7 @@ import Alert from "../ui/Alert";
 import Input from "../ui/Input";
 import { authContext } from "../../contexts/AuthContext";
 
-export default function ({ login }) {
+export default function Form({ login }) {
   const firstName = useRef();
   const lastName = useRef();
   const email = useRef();
