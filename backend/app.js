@@ -3,6 +3,8 @@ const cors = require("cors");
 
 const sequelize = require("./utils/sequelize");
 const userRoute = require("./routes/userRoute");
+const User = require("./models/userModel");
+const Expense = require("./models/expenseModel");
 
 const app = express();
 const port = 4000;
@@ -12,6 +14,9 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/user", userRoute);
+
+User.hasMany(Expense);
+Expense.belongsTo(User);
 
 sequelize
   .authenticate()

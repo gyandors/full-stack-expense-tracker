@@ -1,15 +1,18 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import axios from "axios";
 
 import Spinner from "../../assets/Spinner";
 import Alert from "../ui/Alert";
 import Input from "../ui/Input";
+import { authContext } from "../../contexts/AuthContext";
 
 export default function ({ login }) {
   const firstName = useRef();
   const lastName = useRef();
   const email = useRef();
   const password = useRef();
+
+  const authCtx = useContext(authContext);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState();
@@ -23,15 +26,16 @@ export default function ({ login }) {
         password: password.current.value,
       };
 
+      setLoading(true);
       try {
-        setLoading(true);
         const response = await axios.post(
           "http://localhost:4000/user/signin",
           userData
         );
 
-        console.log(response);
-        if (response) alert("Login successfull");
+        if (response) {
+          authCtx.login(response.data);
+        }
 
         email.current.value = "";
         password.current.value = "";
@@ -46,7 +50,6 @@ export default function ({ login }) {
           });
         }
       }
-      setLoading(false);
     } else {
       const userData = {
         firstName: firstName.current.value,
@@ -55,15 +58,16 @@ export default function ({ login }) {
         password: password.current.value,
       };
 
+      setLoading(true);
       try {
-        setLoading(true);
         const response = await axios.post(
           "http://localhost:4000/user/signup",
           userData
         );
 
-        console.log(response);
-        if (response) alert("Account created");
+        if (response) {
+          authCtx.login(response.data);
+        }
 
         firstName.current.value = "";
         lastName.current.value = "";
@@ -80,20 +84,9 @@ export default function ({ login }) {
           });
         }
       }
-      setLoading(false);
     }
+    setLoading(false);
   };
-
-  useEffect(() => {
-    let timeId;
-    if (error) {
-      timeId = setTimeout(() => {
-        setError(null);
-      }, 3000);
-    }
-
-    () => clearTimeout(timeId);
-  }, [error]);
 
   return (
     <>

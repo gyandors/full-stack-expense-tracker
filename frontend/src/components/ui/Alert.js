@@ -1,8 +1,17 @@
+import { useEffect } from "react";
+import { createPortal } from "react-dom";
+
 import AlertLogo from "../../assets/AlertLogo";
 import CloseIcon from "../../assets/CloseIcon";
 
 export default function Alert(props) {
-  return (
+  useEffect(() => {
+    const timeId = setTimeout(props.closeError, 3000);
+
+    () => clearTimeout(timeId);
+  }, []);
+
+  return createPortal(
     <div className="px-4 rounded-md border-l-4 border-red-500 bg-red-50 w-full sm:w-96 sm:px-8 fixed top-4 right-0 sm:right-4">
       <div className="flex justify-between py-3">
         <div className="flex">
@@ -18,6 +27,7 @@ export default function Alert(props) {
           <CloseIcon />
         </button>
       </div>
-    </div>
+    </div>,
+    document.getElementById("error")
   );
 }
