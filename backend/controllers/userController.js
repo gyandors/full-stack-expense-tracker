@@ -1,4 +1,5 @@
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const User = require("../models/userModel");
 
@@ -9,9 +10,9 @@ const User = require("../models/userModel");
  * @param {import('express').NextFunction} next
  */
 exports.postUserSignup = async (req, res, next) => {
-  try {
-    const { firstName, lastName, email, password } = req.body;
+  const { firstName, lastName, email, password } = req.body;
 
+  try {
     if (
       firstName.trim().length < 1 ||
       lastName.trim().length < 1 ||
@@ -31,8 +32,9 @@ exports.postUserSignup = async (req, res, next) => {
       throw error;
     }
 
-    const existingUser = await User.findAll({ where: { email: email } });
-    if (existingUser[0]) {
+    const existingUser = await User.findOne({ where: { email: email } });
+
+    if (existingUser) {
       const error = new Error("Email already exists.");
       error.code = 409;
       throw error;
@@ -46,6 +48,15 @@ exports.postUserSignup = async (req, res, next) => {
       email,
       password: encryptedPassword,
     });
+
+    //Creating jwt token and deleting some properties before sending the response.
+    delete user.dataValues.password;
+    delete user.dataValues.createdAt;
+    delete user.dataValues.updatedAt;
+    user.dataValues.idToken = jwt.sign(
+      { id: user.dataValues.id },
+      "PrivateKey"
+    );
 
     res.status(201).json(user);
   } catch (error) {
@@ -61,25 +72,34 @@ exports.postUserSignup = async (req, res, next) => {
  * @param {import('express').NextFunction} next
  */
 exports.postUserSignin = async (req, res, next) => {
-  try {
-    const { email, password } = req.body;
+  const { email, password } = req.body;
 
+  try {
     if (email.trim().length < 1 || password.trim().length < 1) {
       const error = new Error("Enter the required details.");
       error.code = 400;
       throw error;
     }
 
-    const existingUser = await User.findAll({ where: { email: email } });
+    const existingUser = await User.findOne({ where: { email: email } });
 
-    if (existingUser[0]) {
-      const encryptedPassword = existingUser[0].dataValues.password;
+    if (existingUser) {
+      const encryptedPassword = existingUser.dataValues.password;
       const decryptedPassword = await bcrypt.compare(
         password,
         encryptedPassword
       );
       if (decryptedPassword) {
-        res.status(200).json(existingUser[0]);
+        //Creating jwt token and deleting some properties before sending the response.
+        delete existingUser.dataValues.password;
+        delete existingUser.dataValues.createdAt;
+        delete existingUser.dataValues.updatedAt;
+        existingUser.dataValues.idToken = jwt.sign(
+          { id: existingUser.dataValues.id },
+          "PrivateKey"
+        );
+
+        res.status(200).json(existingUser);
       } else {
         const error = new Error("User not authorized.");
         error.code = 401;

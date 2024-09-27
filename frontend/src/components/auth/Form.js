@@ -29,7 +29,7 @@ export default function Form({ login }) {
       setLoading(true);
       try {
         const response = await axios.post(
-          "http://localhost:4000/user/signin",
+          "http://localhost:4000/api/user/signin",
           userData
         );
 
@@ -61,7 +61,7 @@ export default function Form({ login }) {
       setLoading(true);
       try {
         const response = await axios.post(
-          "http://localhost:4000/user/signup",
+          "http://localhost:4000/api/user/signup",
           userData
         );
 

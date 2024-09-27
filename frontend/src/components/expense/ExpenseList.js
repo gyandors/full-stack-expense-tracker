@@ -1,28 +1,24 @@
-import { useContext, useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 
 import ExpenseItem from "./ExpenseItem";
-import { authContext } from "../../contexts/AuthContext";
 import { getExpense } from "../../reducers/expenseReducer";
 import Alert from "../ui/Alert";
 
-export default function ExpenseList() {
+export default function ExpenseList({ idToken }) {
   const expenseItems = useSelector((state) => state.expense.expenseItems);
 
   const dispatch = useDispatch();
-
-  const authCtx = useContext(authContext);
-  const userId = authCtx.loggedUser.id;
 
   const [error, setError] = useState();
 
   const fetchExpenses = useCallback(
     async function () {
       try {
-        const response = await axios.get(
-          `http://localhost:4000/user/${userId}/expense`
-        );
+        const response = await axios.get("http://localhost:4000/api/expense", {
+          headers: { Authorization: idToken },
+        });
 
         dispatch(getExpense(response.data));
       } catch (error) {
@@ -36,7 +32,7 @@ export default function ExpenseList() {
         }
       }
     },
-    [dispatch, userId]
+    [dispatch, idToken]
   );
 
   useEffect(() => {
@@ -45,11 +41,12 @@ export default function ExpenseList() {
 
   return (
     <>
-      <ul className="divide-y divide-gray-100">
+      <ul className="divide-y divide-gray-300">
         {expenseItems.map((e) => {
           return (
             <ExpenseItem
               key={e.id}
+              id={e.id}
               amount={e.amount}
               description={e.description}
               category={e.category}

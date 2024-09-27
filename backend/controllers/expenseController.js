@@ -1,5 +1,3 @@
-const User = require("../models/userModel");
-
 /**
  *
  * @param {import('express').Request} req
@@ -8,8 +6,14 @@ const User = require("../models/userModel");
  */
 exports.getExpense = async (req, res, next) => {
   try {
-    const user = await User.findByPk(req.params.userId);
-    const expenses = await user.getExpenses();
+    const expenses = await req.user.getExpenses();
+
+    //Deleting some properties before sending the response.
+    expenses.forEach((e) => {
+      delete e.dataValues.createdAt;
+      delete e.dataValues.updatedAt;
+      delete e.dataValues.userId;
+    });
 
     res.status(200).json(expenses);
   } catch (error) {
@@ -24,17 +28,42 @@ exports.getExpense = async (req, res, next) => {
  * @param {import('express').Response} res
  * @param {import('express').NextFunction} next
  */
-exports.postAddExpense = async (req, res, next) => {
+exports.postExpense = async (req, res, next) => {
+  const { amount, description, category } = req.body;
   try {
-    const user = await User.findByPk(req.params.userId);
-    const { amount, description, category } = req.body;
-    const expense = await user.createExpense({
+    const expense = await req.user.createExpense({
       amount,
       description,
       category,
     });
 
+    //Deleting some properties before sending the response.
+    delete expense.dataValues.createdAt;
+    delete expense.dataValues.updatedAt;
+    delete expense.dataValues.userId;
+
     res.status(201).json(expense);
+  } catch (error) {
+    console.error(error);
+    res.status(error.code || 500).json(error.message);
+  }
+};
+
+/**
+ *
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @param {import('express').NextFunction} next
+ */
+exports.deleteExpense = async (req, res, next) => {
+  try {
+    const expenses = await req.user.getExpenses({
+      where: { id: req.params.expenseId },
+    });
+
+    await expenses[0].destroy();
+
+    res.status(200).json("Expense has been deleted");
   } catch (error) {
     console.error(error);
     res.status(error.code || 500).json(error.message);

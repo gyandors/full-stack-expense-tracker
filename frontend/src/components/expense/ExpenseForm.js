@@ -1,22 +1,19 @@
-import { useRef, useState, useContext } from "react";
+import { useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import axios from "axios";
 
 import Input from "../ui/Input";
 import Spinner from "../../assets/Spinner";
 import { addExpense } from "../../reducers/expenseReducer";
-import { authContext } from "../../contexts/AuthContext";
 import Alert from "../ui/Alert";
 
-export default function ExpenseForm() {
+export default function ExpenseForm({ idToken }) {
   const amount = useRef();
   const description = useRef();
   const category = useRef();
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState();
-
-  const authCtx = useContext(authContext);
 
   const dispatch = useDispatch();
 
@@ -32,11 +29,16 @@ export default function ExpenseForm() {
     try {
       setLoading(true);
       const response = await axios.post(
-        `http://localhost:4000/user/${authCtx.loggedUser.id}/add-expense`,
-        expenseData
+        "http://localhost:4000/api/expense",
+        expenseData,
+        { headers: { Authorization: idToken } }
       );
 
       dispatch(addExpense(response.data));
+
+      amount.current.value = "";
+      description.current.value = "";
+      category.current.value = "";
     } catch (error) {
       console.error(error);
       if (error.response) {
@@ -71,9 +73,9 @@ export default function ExpenseForm() {
           >
             <option value="" hidden></option>
             <option value="Food">Food</option>
-            <option value="Food">Loan</option>
-            <option value="Food">Education</option>
-            <option value="Food">Grocery</option>
+            <option value="Loan">Loan</option>
+            <option value="Education">Education</option>
+            <option value="Grocery">Grocery</option>
           </select>
         </div>
         <button
