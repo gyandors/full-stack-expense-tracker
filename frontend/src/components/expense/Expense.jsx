@@ -6,6 +6,7 @@ import { authContext } from "../../contexts/AuthContext";
 
 export default function Expense() {
   const authCtx = useContext(authContext);
+  console.log(authCtx);
   const idToken = authCtx.loggedUser.idToken;
 
   return (

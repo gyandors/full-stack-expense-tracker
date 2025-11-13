@@ -1,5 +1,5 @@
-import Form from "./Form.js";
-import GoogleLogo from "../../assets/GoogleLogo.js";
+import Form from "./Form";
+import GoogleLogo from "../../assets/GoogleLogo";
 import { useState } from "react";
 
 export default function Auth() {
