@@ -4,7 +4,7 @@ import axios from "axios";
 import Spinner from "../../assets/Spinner";
 import Alert from "../ui/Alert";
 import Input from "../ui/Input";
-import { authContext } from "../../contexts/AuthContext";
+import { AuthContext } from "../../contexts/AuthContext";
 
 export default function Form({ login }) {
   const firstName = useRef();
@@ -12,7 +12,7 @@ export default function Form({ login }) {
   const email = useRef();
   const password = useRef();
 
-  const authCtx = useContext(authContext);
+  const authCtx = useContext(AuthContext);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState();

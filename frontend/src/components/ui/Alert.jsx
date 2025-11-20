@@ -14,7 +14,7 @@ export default function Alert(props) {
   }, [closeError]);
 
   return createPortal(
-    <div className="px-4 rounded-md border-l-4 border-red-500 bg-red-50 w-full sm:w-96 sm:px-8 fixed top-4 right-0 sm:right-4">
+    <div className="px-4 rounded-md border-l-4 border-red-500 bg-red-50 w-full sm:w-96 sm:px-8 fixed top-4 right-0 sm:right-4 z-[100] shadow-lg">
       <div className="flex justify-between py-3">
         <div className="flex">
           <div>

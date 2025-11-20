@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { authContext } from "./AuthContext";
+import { AuthContext } from "./AuthContext";
 
 export default function AuthProvider({ children }) {
   const [loggedIn, setLoggedIn] = useState(!!localStorage.getItem("userData"));
@@ -13,11 +13,25 @@ export default function AuthProvider({ children }) {
     setLoggedUser(userData);
   }
 
+  function logout() {
+    localStorage.removeItem("userData");
+    setLoggedIn(false);
+    setLoggedUser(null);
+  }
+
+  function setIsPremiumUser(value) {
+    const updatedUser = { ...loggedUser, isPremiumUser: value };
+    localStorage.setItem("userData", JSON.stringify(updatedUser));
+    setLoggedUser(updatedUser);
+  }
+
   const value = {
     loggedIn,
     login,
+    logout,
     loggedUser,
+    setIsPremiumUser,
   };
 
-  return <authContext.Provider value={value}>{children}</authContext.Provider>;
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

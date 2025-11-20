@@ -41,6 +41,9 @@ export default function ExpenseList({ idToken }) {
 
   return (
     <>
+      {expenseItems.length === 0 && (
+        <p className="text-center text-gray-500">No expenses found.</p>
+      )}
       <ul className="divide-y divide-gray-300">
         {expenseItems.map((e) => {
           return (

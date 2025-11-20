@@ -115,3 +115,22 @@ exports.postUserSignin = async (req, res, next) => {
     res.status(error.code || 500).json(error.message);
   }
 };
+
+/**
+ *
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @param {import('express').NextFunction} next
+ */
+exports.getUserData = async (req, res, next) => {
+  try {
+    const user = await User.findByPk(req.user.id, {
+      attributes: { exclude: ["password", "createdAt", "updatedAt"] },
+    });
+
+    res.status(200).json(user);
+  } catch (error) {
+    console.error(error);
+    res.status(error.code || 500).json(error.message);
+  }
+};

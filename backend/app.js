@@ -1,11 +1,14 @@
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 
 const sequelize = require("./utils/sequelize");
 const userRoute = require("./routes/userRoute");
 const expenseRoute = require("./routes/expenseRoute");
+const purchaseRoute = require("./routes/purchaseRoute");
 const User = require("./models/userModel");
 const Expense = require("./models/expenseModel");
+const Order = require("./models/orderModel");
 const auth = require("./middlewares/auth");
 
 const app = express();
@@ -19,8 +22,13 @@ app.use("/api/user", userRoute);
 
 app.use("/api/expense", auth.authenticate, expenseRoute);
 
+app.use("/api/purchase", auth.authenticate, purchaseRoute);
+
 User.hasMany(Expense);
 Expense.belongsTo(User);
+
+User.hasMany(Order);
+Order.belongsTo(User);
 
 sequelize
   .authenticate()

@@ -3,13 +3,13 @@ import axios from "axios";
 import { useDispatch } from "react-redux";
 
 import { DeleteIcon } from "../../assets/Icons";
-import { authContext } from "../../contexts/AuthContext";
+import { AuthContext } from "../../contexts/AuthContext";
 import { deleteExpense } from "../../reducers/expenseReducer";
 
 export default function ExpenseItem(props) {
   const { id, amount, description, category } = props;
 
-  const authCtx = useContext(authContext);
+  const authCtx = useContext(AuthContext);
   const idToken = authCtx.loggedUser.idToken;
 
   const dispatch = useDispatch();
