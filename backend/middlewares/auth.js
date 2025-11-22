@@ -26,3 +26,24 @@ exports.authenticate = async (req, res, next) => {
     res.status(error.code || 500).json(error.message);
   }
 };
+
+/**
+ *
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @param {import('express').NextFunction} next
+ */
+exports.isPremiumUser = async (req, res, next) => {
+  try {
+    if (req.user.isPremiumUser) {
+      next();
+    } else {
+      const error = new Error("Access denied. Premium membership required.");
+      error.code = 403;
+      throw error;
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(error.code || 500).json(error.message);
+  }
+};

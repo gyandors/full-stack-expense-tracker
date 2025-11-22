@@ -40,26 +40,31 @@ export default function ExpenseList({ idToken }) {
   }, [fetchExpenses]);
 
   return (
-    <>
-      {expenseItems.length === 0 && (
-        <p className="text-center text-gray-500">No expenses found.</p>
-      )}
-      <ul className="divide-y divide-gray-300">
-        {expenseItems.map((e) => {
-          return (
-            <ExpenseItem
-              key={e.id}
-              id={e.id}
-              amount={e.amount}
-              description={e.description}
-              category={e.category}
-            />
-          );
-        })}
-      </ul>
-      {error && (
-        <Alert message={error.message} closeError={() => setError(null)} />
-      )}
-    </>
+    <div className="space-y-2">
+      <h3 className="text-gray-500 mt-4 px-4 sm:px-0 font-bold text-xl">
+        Your Expenses
+      </h3>
+      <div className="bg-white shadow p-4 py-6 sm:p-6 sm:rounded-lg">
+        {expenseItems.length === 0 && (
+          <p className="text-center text-gray-500">No expenses found.</p>
+        )}
+        <ul className="divide-y divide-gray-300">
+          {expenseItems.map((e) => {
+            return (
+              <ExpenseItem
+                key={e.id}
+                id={e.id}
+                amount={e.amount}
+                description={e.description}
+                category={e.category}
+              />
+            );
+          })}
+        </ul>
+        {error && (
+          <Alert message={error.message} closeError={() => setError(null)} />
+        )}
+      </div>
+    </div>
   );
 }

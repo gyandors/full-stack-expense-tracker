@@ -1,11 +1,12 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import axios from "axios";
 
 import { AuthContext } from "./contexts/AuthContext";
 import Auth from "./components/auth/Auth";
 import Expense from "./components/expense/Expense";
 import Header from "./components/header/Header";
-import { useEffect } from "react";
+import Leaderboard from "./components/leaderboard/Leaderboard";
+import ExpenseList from "./components/expense/ExpenseList";
 
 export default function App() {
   const { loggedIn, loggedUser, login, logout } = useContext(AuthContext);
@@ -33,9 +34,18 @@ export default function App() {
   return (
     <>
       <Header />
-      <main className="w-full flex items-center justify-center bg-gray-50 mt-16 sm:px-4">
-        {loggedIn ? <Expense /> : <Auth />}
-      </main>
+      {loggedIn ? (
+        <main className="min-h-dvh bg-gray-50 pt-16 sm:px-4">
+          <div className="mb-6 flex flex-col sm:flex-row gap-6">
+            <Expense />
+            <Leaderboard />
+          </div>
+
+          <ExpenseList idToken={loggedUser.idToken} />
+        </main>
+      ) : (
+        <Auth />
+      )}
     </>
   );
 }

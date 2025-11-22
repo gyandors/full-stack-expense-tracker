@@ -6,6 +6,7 @@ const sequelize = require("./utils/sequelize");
 const userRoute = require("./routes/userRoute");
 const expenseRoute = require("./routes/expenseRoute");
 const purchaseRoute = require("./routes/purchaseRoute");
+const leaderboardRoute = require("./routes/leaderboardRoute");
 const User = require("./models/userModel");
 const Expense = require("./models/expenseModel");
 const Order = require("./models/orderModel");
@@ -23,6 +24,8 @@ app.use("/api/user", userRoute);
 app.use("/api/expense", auth.authenticate, expenseRoute);
 
 app.use("/api/purchase", auth.authenticate, purchaseRoute);
+
+app.use("/api/leaderboard", auth.authenticate, leaderboardRoute);
 
 User.hasMany(Expense);
 Expense.belongsTo(User);

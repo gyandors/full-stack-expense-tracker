@@ -6,6 +6,7 @@ const sequelize = new Sequelize({
   username: "root",
   password: "root",
   timezone: "+05:30",
+  logging: false,
 });
 
 module.exports = sequelize;
