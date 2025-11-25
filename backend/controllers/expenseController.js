@@ -37,6 +37,8 @@ exports.postExpense = async (req, res, next) => {
       category,
     });
 
+    await req.user.increment("totalExpenses", { by: amount });
+
     //Deleting some properties before sending the response.
     delete expense.dataValues.createdAt;
     delete expense.dataValues.updatedAt;
@@ -60,6 +62,8 @@ exports.deleteExpense = async (req, res, next) => {
     const expenses = await req.user.getExpenses({
       where: { id: req.params.expenseId },
     });
+
+    await req.user.decrement("totalExpenses", { by: expenses[0].amount });
 
     await expenses[0].destroy();
 

@@ -39,7 +39,7 @@ export default function LeaderboardData({ idToken, isPremiumUser, id }) {
                   {user.id === id && "(You)"}
                 </span>
                 <span className="font-semibold">
-                  ₹ {user.totalExpenses.toFixed(2)}
+                  ₹ {user.totalExpenses || 0}
                 </span>
               </li>
             );
