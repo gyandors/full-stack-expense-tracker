@@ -1,5 +1,6 @@
 const User = require("../models/userModel");
 const Expense = require("../models/expenseModel");
+const sequelize = require("../utils/sequelize");
 
 /**
  *
@@ -9,23 +10,21 @@ const Expense = require("../models/expenseModel");
  */
 exports.getLeaderboard = async (req, res, next) => {
   try {
-    const users = await User.findAll();
+    const usersWithExpenses = await User.findAll({
+      attributes: [
+        "id",
+        "firstName",
+        "lastName",
+        [
+          sequelize.fn("sum", sequelize.col("expenses.amount")),
+          "totalExpenses",
+        ],
+      ],
+      include: [{ model: Expense, attributes: [] }],
+      group: ["users.id"],
+      order: [["totalExpenses", "DESC"]],
+    });
 
-    const usersWithExpenses = await Promise.all(
-      users.map(async (user) => {
-        const totalExpenses = await Expense.sum("amount", {
-          where: { userId: user.id },
-        });
-        return {
-          id: user.id,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          totalExpenses: totalExpenses || 0,
-        };
-      })
-    );
-
-    usersWithExpenses.sort((a, b) => b.totalExpenses - a.totalExpenses);
     res.status(200).json(usersWithExpenses);
   } catch (error) {
     console.error(error);
