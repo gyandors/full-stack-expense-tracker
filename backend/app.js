@@ -1,6 +1,8 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
+const morgan = require("morgan");
+const fs = require("fs");
 
 const sequelize = require("./utils/sequelize");
 const userRoute = require("./routes/userRoute");
@@ -13,10 +15,11 @@ const Order = require("./models/orderModel");
 const auth = require("./middlewares/auth");
 
 const app = express();
-const port = 4000;
 
+const accessLogStream = fs.createWriteStream("./access.log", { flags: "a" });
+
+app.use(morgan("combined", { stream: accessLogStream }));
 app.use(cors());
-
 app.use(express.json());
 
 app.use("/api/user", userRoute);
@@ -41,6 +44,8 @@ sequelize
     return sequelize.sync({ force: true });
   })
   .then(() =>
-    app.listen(port, () => console.log("Server listening on port", port))
+    app.listen(process.env.PORT || 4000, () =>
+      console.log("Server listening on port", process.env.PORT || 4000)
+    )
   )
   .catch((err) => console.error("Unable to connect to the database:", err));
