@@ -1,6 +1,6 @@
-const { DataTypes } = require("sequelize");
+import { DataTypes } from "sequelize";
 
-const sequelize = require("../utils/sequelize");
+import sequelize from "../utils/sequelize";
 
 const Expense = sequelize.define("expenses", {
   id: {
@@ -22,4 +22,4 @@ const Expense = sequelize.define("expenses", {
   },
 });
 
-module.exports = Expense;
+export default Expense;

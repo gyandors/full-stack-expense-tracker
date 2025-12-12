@@ -1,17 +1,12 @@
-const razorpay = require("../utils/razorpay");
+import { Request, Response } from "express";
 
-/**
- *
- * @param {import('express').Request} req
- * @param {import('express').Response} res
- * @param {import('express').NextFunction} next
- */
-exports.postPurchasePremium = async (req, res) => {
+import razorpay from "../utils/razorpay";
+import HttpError from "../utils/HttpError";
+
+export const postPurchasePremium = async (req: Request, res: Response) => {
   try {
     if (req.user.isPremiumUser) {
-      const error = new Error("User is already a premium user");
-      error.code = 400;
-      throw error;
+      throw new HttpError("User is already a premium user", 400);
     }
 
     const order = await razorpay.orders.create({
@@ -25,27 +20,22 @@ exports.postPurchasePremium = async (req, res) => {
     });
 
     res.status(201).json({ ...order });
-  } catch (error) {
+  } catch (error: any) {
     console.error(error);
     res.status(error.code || 500).json(error.message);
   }
 };
 
-/**
- *
- * @param {import('express').Request} req
- * @param {import('express').Response} res
- * @param {import('express').NextFunction} next
- */
-exports.PostUpdateTransactionStatus = async (req, res) => {
+export const postUpdateTransactionStatus = async (
+  req: Request,
+  res: Response
+) => {
   try {
     const { orderId, paymentId } = req.body;
     const order = await req.user.getOrders({ where: { orderId: orderId } });
 
     if (order.length === 0) {
-      const error = new Error("Order not found");
-      error.code = 404;
-      throw error;
+      throw new HttpError("Order not found", 404);
     }
     const currentOrder = order[0];
 
@@ -53,7 +43,7 @@ exports.PostUpdateTransactionStatus = async (req, res) => {
     await req.user.update({ isPremiumUser: true });
 
     res.status(201).json("Transaction status updated successfully");
-  } catch (error) {
+  } catch (error: any) {
     console.error(error);
     res.status(error.code || 500).json(error.message);
   }
